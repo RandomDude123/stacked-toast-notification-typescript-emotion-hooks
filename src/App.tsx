@@ -28,7 +28,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ margin: 64 }}>
+    <div style={{ margin: 8 }}>
       <form
         onSubmit={onSubmit}
         style={{
@@ -71,9 +71,9 @@ export default function App() {
         <br />
 
         <textarea
+          style={{ width: "100%" }}
           name="text"
           rows={4}
-          cols={50}
           placeholder="Toast message..."
         />
         <br />

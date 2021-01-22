@@ -56,8 +56,9 @@ const Wrapper = styled.div<{ toastType: ToastTypes }>`
   color: ${({ toastType }) => toastColors[toastType].color};
   display: flex;
   margin-bottom: 8px;
+  max-width: ${NOTIFICATION_WIDTH}px;
   overflow: hidden;
-  width: ${NOTIFICATION_WIDTH}px;
+  width: 100%;
 `;
 
 const Content = styled.div`
