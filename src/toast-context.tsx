@@ -1,13 +1,8 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
 import * as React from "react";
-import { css, jsx } from "@emotion/core";
-import { TransitionGroup } from "react-transition-group";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import styled from "@emotion/styled";
 import { nanoid } from "nanoid";
 import { FiXCircle } from "react-icons/fi";
-
-import StyledTransition from "./utils/styled-transition";
 
 const NOTIFICATION_WIDTH = 360; // in px
 const TRANSTION_DURATION = 220; // in ms
@@ -19,7 +14,7 @@ const colors = {
   info: "#31343c",
   success: "#62b440",
   warning: "#e0a408",
-  danger: "#f44336"
+  danger: "#f44336",
 };
 
 const StyledTransitionGroup = styled(TransitionGroup)`
@@ -38,14 +33,14 @@ export enum ToastTypes {
   ERROR = "error",
   INFO = "info",
   SUCCESS = "success",
-  WARNING = "warning"
+  WARNING = "warning",
 }
 
 const toastColors = {
   error: { backgroundColor: colors.danger, color: colors.white },
   info: { backgroundColor: colors.info, color: colors.white },
   success: { backgroundColor: colors.success, color: colors.white },
-  warning: { backgroundColor: colors.warning, color: colors.white }
+  warning: { backgroundColor: colors.warning, color: colors.white },
 };
 
 const Wrapper = styled.div<{ toastType: ToastTypes }>`
@@ -59,6 +54,27 @@ const Wrapper = styled.div<{ toastType: ToastTypes }>`
   max-width: ${NOTIFICATION_WIDTH}px;
   overflow: hidden;
   width: 100%;
+
+  &.enter {
+    transform: translate(${NOTIFICATION_WIDTH + 8}px, 0);
+  }
+
+  &.enter-active {
+    transform: translate(0, 0);
+    transition-property: all;
+    transition-duration: ${TRANSTION_DURATION}ms;
+    transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+    transition-delay: ${TRANSTION_DURATION}ms;
+  }
+
+  &.exit {
+    opacity: 1;
+  }
+
+  &.exit-active {
+    transition: all ${TRANSTION_DURATION}ms ease-out;
+    opacity: 0;
+  }
 `;
 
 const Content = styled.div`
@@ -143,7 +159,7 @@ function ToastContextProvider({ children }: ToastContextProviderProps) {
     }) =>
       setToasts((toasts) => [
         ...toasts,
-        { id: nanoid(), autoDismiss, autoDismissTimeout, ...rest }
+        { id: nanoid(), autoDismiss, autoDismissTimeout, ...rest },
       ]),
     [setToasts]
   );
@@ -161,7 +177,7 @@ function ToastContextProvider({ children }: ToastContextProviderProps) {
   const value = React.useMemo(
     () => ({
       addToast,
-      clearAllToasts
+      clearAllToasts,
     }),
     [addToast, clearAllToasts]
   );
@@ -172,30 +188,7 @@ function ToastContextProvider({ children }: ToastContextProviderProps) {
 
       <StyledTransitionGroup>
         {toasts.map((toast, index) => (
-          <StyledTransition
-            key={toast.id}
-            timeout={2 * TRANSTION_DURATION}
-            transitions={{
-              /* + padding of StyledTransitionGroup */
-              enter: css`
-                transform: translate(${NOTIFICATION_WIDTH + 8}px, 0);
-              `,
-              enterActive: css`
-                transform: translate(0, 0);
-                transition-property: all;
-                transition-duration: ${TRANSTION_DURATION}ms;
-                transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
-                transition-delay: ${TRANSTION_DURATION}ms;
-              `,
-              exit: css`
-                opacity: 1;
-              `,
-              exitActive: css`
-                transition: all ${TRANSTION_DURATION}ms ease-out;
-                opacity: 0;
-              `
-            }}
-          >
+          <CSSTransition key={toast.id} timeout={2 * TRANSTION_DURATION}>
             <Wrapper toastType={toast.type}>
               <Content>{toast.msg}</Content>
 
@@ -210,7 +203,7 @@ function ToastContextProvider({ children }: ToastContextProviderProps) {
                 </CloseButton>
               </CloseButtonWrapper>
             </Wrapper>
-          </StyledTransition>
+          </CSSTransition>
         ))}
       </StyledTransitionGroup>
     </ToastContext.Provider>
